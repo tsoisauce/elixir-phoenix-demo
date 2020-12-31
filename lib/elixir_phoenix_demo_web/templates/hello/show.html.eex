@@ -1,3 +1,4 @@
 <div class="phx-hero">
   <h2>Hello World, from <%= @messenger %>!</h2>
+  <p>This is your message: <%= @message %></p>
 </div>
