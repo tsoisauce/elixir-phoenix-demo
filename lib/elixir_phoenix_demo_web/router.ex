@@ -2,7 +2,7 @@ defmodule ElixirPhoenixDemoWeb.Router do
   use ElixirPhoenixDemoWeb, :router
 
   pipeline :browser do
-    plug :accepts, ["html", "text"]
+    plug :accepts, ["html", "text", "json"]
     plug :fetch_session
     plug :fetch_flash
     plug :protect_from_forgery
@@ -20,6 +20,7 @@ defmodule ElixirPhoenixDemoWeb.Router do
     get "/", PageController, :index
     get "/redirect_internal", PageController, :redirect_internal
     get "redirect_external", PageController, :redirect_external
+    get "/test_json", PageController, :json_test
     get "/redirect_test", PageController, :redirect_test
     get "/hello", HelloController, :index
     get "/hello/:messenger", HelloController, :show

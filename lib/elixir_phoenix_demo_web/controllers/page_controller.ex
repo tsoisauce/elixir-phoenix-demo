@@ -5,6 +5,12 @@ defmodule ElixirPhoenixDemoWeb.PageController do
     render(conn, "index.html")
   end
 
+  def json_test(conn, _params) do
+    pages = [%{title: "foo"}, %{title: "bar"}]
+
+    render(conn, "json_test.json", pages: pages)
+  end
+
   def redirect_internal(conn, _params) do
     conn
     |> put_flash(:info, "You have been redirected, from flash info!")
