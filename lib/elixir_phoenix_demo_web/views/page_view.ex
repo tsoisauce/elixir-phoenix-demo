@@ -6,6 +6,9 @@ defmodule ElixirPhoenixDemoWeb.PageView do
   end
 
   def render("page.json", %{page: page}) do
-    %{title: page.title}
+    %{
+      title: page.title,
+      message: page.message
+    }
   end
 end

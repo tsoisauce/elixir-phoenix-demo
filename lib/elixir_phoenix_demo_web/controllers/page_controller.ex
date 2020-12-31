@@ -6,9 +6,11 @@ defmodule ElixirPhoenixDemoWeb.PageController do
   end
 
   def json_test(conn, _params) do
-    pages = [%{title: "foo"}, %{title: "bar"}]
+    pages = [%{title: "foo", message: "bar"}, %{title: "bar", message: "foo"}]
 
-    render(conn, "json_test.json", pages: pages)
+    conn
+    |> assign(:pages, pages)
+    |> render("json_test.json")
   end
 
   def redirect_internal(conn, _params) do
