@@ -18,10 +18,15 @@ defmodule ElixirPhoenixDemoWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    resources "/users", UserController
+
+    # Test JSON and redirects
     get "/redirect_internal", PageController, :redirect_internal
     get "redirect_external", PageController, :redirect_external
     get "/test_json", PageController, :json_test
     get "/redirect_test", PageController, :redirect_test
+
+    # Hello pages
     get "/hello", HelloController, :index
     get "/hello/:messenger", HelloController, :show
   end
