@@ -6,7 +6,7 @@ defmodule ElixirPhoenixDemo.Accounts do
   import Ecto.Query, warn: false
   alias ElixirPhoenixDemo.Repo
 
-  alias ElixirPhoenixDemo.Accounts.User
+  alias ElixirPhoenixDemo.Accounts.{User, Credential}
 
   @doc """
   Returns the list of users.
@@ -18,7 +18,9 @@ defmodule ElixirPhoenixDemo.Accounts do
 
   """
   def list_users do
-    Repo.all(User)
+    User
+    |> Repo.all()
+    |> Repo.preload(:credential)
   end
 
   @doc """
@@ -35,7 +37,11 @@ defmodule ElixirPhoenixDemo.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id) do
+    User
+    |> Repo.get!(id)
+    |> Repo.preload(:credential)
+  end
 
   @doc """
   Creates a user.
@@ -52,6 +58,7 @@ defmodule ElixirPhoenixDemo.Accounts do
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
+    |> Ecto.Changeset.cast_assoc(:credential, with: &Credential.changeset/2)
     |> Repo.insert()
   end
 
@@ -70,6 +77,7 @@ defmodule ElixirPhoenixDemo.Accounts do
   def update_user(%User{} = user, attrs) do
     user
     |> User.changeset(attrs)
+    |> Ecto.Changeset.cast_assoc(:credential, with: &Credential.changeset/2)
     |> Repo.update()
   end
 
@@ -101,8 +109,6 @@ defmodule ElixirPhoenixDemo.Accounts do
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end
-
-  alias ElixirPhoenixDemo.Accounts.Credential
 
   @doc """
   Returns the list of credentials.
