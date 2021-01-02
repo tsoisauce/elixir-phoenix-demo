@@ -10,16 +10,17 @@ defmodule ElixirPhoenixDemoWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug Plugs.Locale, "en"
-    defp authenticate_user(conn, _) do
-      case get_session(conn, :user_id) do
-        nil ->
-          conn
-          |> Phoenix.Controller.put_flash(:error, "Login required")
-          |> Phoenix.Controller.redirect(to: "/")
-          |> halt()
-        user_id ->
-          assign(conn, :current_user, ElixirPhoenixDemo.Accounts.get_user!(user_id))
-      end
+  end
+
+  defp authenticate_user(conn, _) do
+    case get_session(conn, :user_id) do
+      nil ->
+        conn
+        |> Phoenix.Controller.put_flash(:error, "Login required")
+        |> Phoenix.Controller.redirect(to: "/")
+        |> halt()
+      user_id ->
+        assign(conn, :current_user, ElixirPhoenixDemo.Accounts.get_user!(user_id))
     end
   end
 
@@ -39,10 +40,19 @@ defmodule ElixirPhoenixDemoWeb.Router do
     get "/redirect_external", PageController, :redirect_external
     get "/test_json", PageController, :json_test
     get "/redirect_test", PageController, :redirect_test
+  end
 
+  scope "/", ElixirPhoenixDemoWeb do
+    pipe_through :browser
     # Hello pages
     get "/hello", HelloController, :index
     get "/hello/:messenger", HelloController, :show
+  end
+
+  scope "/cms", ElixirPhoenixDemoWeb.CMS, as: :cms do
+    pipe_through [:browser, :authenticate_user]
+
+    resources "/pages", PageController
   end
 
   # Other scopes may use custom stacks.
