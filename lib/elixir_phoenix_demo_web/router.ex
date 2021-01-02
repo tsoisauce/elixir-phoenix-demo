@@ -1,13 +1,26 @@
 defmodule ElixirPhoenixDemoWeb.Router do
   use ElixirPhoenixDemoWeb, :router
 
+  alias ElixirPhoenixDemoWeb.Plugs
+
   pipeline :browser do
     plug :accepts, ["html", "text", "json"]
     plug :fetch_session
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug ElixirPhoenixDemoWeb.Plugs.Locale, "en"
+    plug Plugs.Locale, "en"
+    defp authenticate_user(conn, _) do
+      case get_session(conn, :user_id) do
+        nil ->
+          conn
+          |> Phoenix.Controller.put_flash(:error, "Login required")
+          |> Phoenix.Controller.redirect(to: "/")
+          |> halt()
+        user_id ->
+          assign(conn, :current_user, ElixirPhoenixDemo.Accounts.get_user!(user_id))
+      end
+    end
   end
 
   pipeline :api do
@@ -19,10 +32,11 @@ defmodule ElixirPhoenixDemoWeb.Router do
 
     get "/", PageController, :index
     resources "/users", UserController
+    resources "/sessions", SessionController, only: [:new, :create, :delete], singleton: true
 
     # Test JSON and redirects
     get "/redirect_internal", PageController, :redirect_internal
-    get "redirect_external", PageController, :redirect_external
+    get "/redirect_external", PageController, :redirect_external
     get "/test_json", PageController, :json_test
     get "/redirect_test", PageController, :redirect_test
 
